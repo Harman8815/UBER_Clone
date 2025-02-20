@@ -1,9 +1,10 @@
 // controllers/user.controller.js
 import { validationResult } from 'express-validator';
 import userModel from '../models/user.model.js';
+import BlacklistToken from '../models/blacklistToken.model.js';
 import * as userService from '../services/user.services.js';
 
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res,next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -28,7 +29,7 @@ export const registerUser = async (req, res) => {
   res.status(201).json({ token, user });
 };
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res,next) => {
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -56,18 +57,18 @@ export const loginUser = async (req, res) => {
   res.status(200).json({ token, user });
 }
 
-// module.exports.getUserProfile = async (req, res, next) => {
+export const getUserProfile = async (req, res, next) => {
 
-//   res.status(200).json(req.user);
+  res.status(200).json(req.user);
 
-// }
+}
 
-// module.exports.logoutUser = async (req, res, next) => {
-//   res.clearCookie('token');
-//   const token = req.cookies.token || req.headers.authorization.split(' ')[ 1 ];
+export const logoutUser = async (req, res,next) => {
+  res.clearCookie('token');
+  const token = req.cookies.token || req.headers.authorization.split(' ')[ 1 ];
 
-//   await blackListTokenModel.create({ token });
+  await BlacklistToken.create({ token });
 
-//   res.status(200).json({ message: 'Logged out' });
+  res.status(200).json({ message: 'Logged out' });
 
-// }
+}

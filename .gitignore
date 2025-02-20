@@ -1,0 +1,52 @@
+# Global ignores
+node_modules/
+.env
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+
+# OS-specific files
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+logs
+*.log
+logs/**/*.log
+
+# Coverage reports
+coverage/
+
+# Client-side ignores
+client/node_modules/
+client/.env
+client/dist/
+client/build/
+client/.next/
+client/.nuxt/
+
+# Server-side ignores
+backend/node_modules/
+backend/.env
+backend/dist/
+backend/build/
+
+# Production files
+*.tgz
+
+# IDE and editor settings
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+.vscode/
+.idea/

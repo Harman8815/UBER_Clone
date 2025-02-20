@@ -267,6 +267,302 @@ const BlacklistToken = mongoose.model('BlacklistToken', blacklistTokenSchema);
 export default BlacklistToken;
 ```
 
+# Captain Route Documentation
+
+## Overview
+
+This document provides an overview of the captain routes in the backend, including the format of the captain input and the expected responses.
+
+## Captain Registration Route
+
+### Endpoint
+
+`POST /captain/register`
+
+### Description
+
+This endpoint is used to register a new captain. It validates the input data and creates a new captain in the database if the input is valid.
+
+### Request Body
+
+The request body should be a JSON object with the following structure:
+
+```json
+{
+  "fullname": {
+    "firstname": "John",
+    "lastname": "Doe"
+  },
+  "email": "john.doe@example.com",
+  "password": "password123",
+  "vehicle": {
+    "color": "red",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+### Validation Rules
+
+- `email`: Must be a valid email address.
+- `fullname.firstname`: Must be at least 3 characters long.
+- `password`: Must be at least 6 characters long.
+- `vehicle.color`: Must be at least 3 characters long.
+- `vehicle.plate`: Must be at least 3 characters long.
+- `vehicle.capacity`: Must be at least 1.
+- `vehicle.vehicleType`: Must be one of `car`, `motorcycle`, `auto`.
+
+### Responses
+
+#### Success
+
+- **Status Code**: `201 Created`
+- **Body**:
+  ```json
+  {
+    "token": "jwt_token_here",
+    "captain": {
+      "_id": "captain_id_here",
+      "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+      },
+      "email": "john.doe@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      },
+      "status": "inactive"
+    }
+  }
+  ```
+
+#### Validation Error
+
+- **Status Code**: `400 Bad Request`
+- **Body**:
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Invalid Email",
+        "param": "email",
+        "location": "body"
+      },
+      {
+        "msg": "First name must be at least 3 characters long",
+        "param": "fullname.firstname",
+        "location": "body"
+      },
+      {
+        "msg": "Password must be at least 6 characters long",
+        "param": "password",
+        "location": "body"
+      },
+      {
+        "msg": "Color must be at least 3 characters long",
+        "param": "vehicle.color",
+        "location": "body"
+      },
+      {
+        "msg": "Plate must be at least 3 characters long",
+        "param": "vehicle.plate",
+        "location": "body"
+      },
+      {
+        "msg": "Capacity must be at least 1",
+        "param": "vehicle.capacity",
+        "location": "body"
+      },
+      {
+        "msg": "Invalid vehicle type",
+        "param": "vehicle.vehicleType",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+
+#### Captain Already Exists
+
+- **Status Code**: `400 Bad Request`
+- **Body**:
+  ```json
+  {
+    "message": "Captain already exists"
+  }
+  ```
+
+## Captain Login Route
+
+### Endpoint
+
+`POST /captain/login`
+
+### Description
+
+This endpoint is used to log in an existing captain. It validates the input data and returns a JWT token if the input is valid.
+
+### Request Body
+
+The request body should be a JSON object with the following structure:
+
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+```
+
+### Validation Rules
+
+- `email`: Must be a valid email address.
+- `password`: Must be at least 6 characters long.
+
+### Responses
+
+#### Success
+
+- **Status Code**: `200 OK`
+- **Body**:
+  ```json
+  {
+    "token": "jwt_token_here",
+    "captain": {
+      "_id": "captain_id_here",
+      "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+      },
+      "email": "john.doe@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      },
+      "status": "inactive"
+    }
+  }
+  ```
+
+#### Validation Error
+
+- **Status Code**: `400 Bad Request`
+- **Body**:
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Invalid Email",
+        "param": "email",
+        "location": "body"
+      },
+      {
+        "msg": "Password must be at least 6 characters long",
+        "param": "password",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+
+#### Invalid Credentials
+
+- **Status Code**: `401 Unauthorized`
+- **Body**:
+  ```json
+  {
+    "message": "Invalid email or password"
+  }
+  ```
+
+## Get Captain Profile Route
+
+### Endpoint
+
+`GET /captain/profile`
+
+### Description
+
+This endpoint is used to get the profile of the logged-in captain. It requires authentication.
+
+### Responses
+
+#### Success
+
+- **Status Code**: `200 OK`
+- **Body**:
+  ```json
+  {
+    "captain": {
+      "_id": "captain_id_here",
+      "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+      },
+      "email": "john.doe@example.com",
+      "vehicle": {
+        "color": "red",
+        "plate": "ABC123",
+        "capacity": 4,
+        "vehicleType": "car"
+      },
+      "status": "inactive"
+    }
+  }
+  ```
+
+#### Unauthorized
+
+- **Status Code**: `401 Unauthorized`
+- **Body**:
+  ```json
+  {
+    "message": "Unauthorized"
+  }
+  ```
+
+## Captain Logout Route
+
+### Endpoint
+
+`GET /captain/logout`
+
+### Description
+
+This endpoint is used to log out the captain. It requires authentication and adds the JWT token to a blacklist.
+
+### Responses
+
+#### Success
+
+- **Status Code**: `200 OK`
+- **Body**:
+  ```json
+  {
+    "message": "Logout successfully"
+  }
+  ```
+
+#### Unauthorized
+
+- **Status Code**: `401 Unauthorized`
+- **Body**:
+  ```json
+  {
+    "message": "Unauthorized"
+  }
+  ```
+
+## Blacklist Token Logic
+
+The blacklist token logic is implemented to invalidate JWT tokens upon captain logout. The tokens are stored in a `BlacklistToken` collection with an expiration time of 24 hours.
+
 ## Conclusion
 
-This document provides a detailed overview of the user routes, including registration, login, profile retrieval, and logout, as well as the blacklist token logic. Ensure that the input data adheres to the validation rules to avoid errors.
+This document provides a detailed overview of the user and captain routes, including registration, login, profile retrieval, and logout, as well as the blacklist token logic. Ensure that the input data adheres to the validation rules to avoid errors.

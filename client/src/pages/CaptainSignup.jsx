@@ -1,44 +1,60 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { UserDataContext } from "../context/userContext";
+import { CaptainDataContext } from "../context/CaptainContext";
 
 const CaptainSignup = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [userData, setUserData] = useContext(UserDataContext);
-  const navigate = useNavigate();
+
+  const [vehicleColor, setVehicleColor] = useState("");
+  const [vehiclePlate, setVehiclePlate] = useState("");
+  const [vehicleCapacity, setVehicleCapacity] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
+
+  const { captain, setCaptain } = React.useContext(CaptainDataContext);
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
-    const userData = {
+    const captainData = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
+      },
       email: email,
       password: password,
-      fullName: {
-        firstName: firstName,
-        lastName: lastName,
+      vehicle: {
+        color: vehicleColor,
+        plate: vehiclePlate,
+        capacity: vehicleCapacity,
+        vehicleType: vehicleType,
       },
     };
 
     const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/users/signup`,
-      userData
+      `${import.meta.env.VITE_BASE_URL}/captain/register`,
+      captainData
     );
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       const data = response.data;
-      setUserData(data.user);
+      setCaptain(data.captain);
       localStorage.setItem("token", data.token);
-      navigate("/home");
+      navigate("/captain-home");
     }
 
     setEmail("");
-    setPassword("");
     setFirstName("");
     setLastName("");
+    setPassword("");
+    setVehicleColor("");
+    setVehiclePlate("");
+    setVehicleCapacity("");
+    setVehicleType("");
   };
 
   return (
@@ -51,55 +67,122 @@ const CaptainSignup = () => {
 
       {/* Main Content */}
       <div className="w-full pt-4 flex flex-col z-10">
-        <div className="font-bold pl-4 pt-2 text-2xl">
+        <div className="font-bold pb-2 pl-4  text-3xl">
           <h2>UBER</h2>
         </div>
 
         <form
-          className="flex flex-col gap-2 p-6 rounded-2xl w-full"
-          onSubmit={submitHandler}
+          onSubmit={(e) => {
+            submitHandler(e);
+          }}
+          className="overflow-hidden flex flex-col p-6 "
         >
-          <h3 className="text-lg font-semibold">What's your Name?</h3>
-          <div className="flex flex-row gap-2">
+          <h3 className="text-lg w-full  font-medium mb-2">
+            What's our Captain's name
+          </h3>
+          <div className="flex gap-4 mb-2 ">
             <input
+              required
+              className="p-2 w-1/2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 bg-white/50 focus:ring-blue-500"
               type="text"
+              placeholder="First name"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder="First Name"
-              className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-1/2"
+              onChange={(e) => {
+                setFirstName(e.target.value);
+              }}
             />
             <input
+              required
+              className="p-2 w-1/2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 bg-white/50 focus:ring-blue-500"
               type="text"
+              placeholder="Last name"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder="Last Name"
-              className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-1/2"
+              onChange={(e) => {
+                setLastName(e.target.value);
+              }}
             />
           </div>
 
-          <h3 className="text-lg font-semibold">What's your email?</h3>
+          <h3 className="text-lg font-medium mb-2">
+            What's our Captain's email
+          </h3>
           <input
-            type="email"
+            required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="abc@gmail.com"
-            className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 bg-white/50 focus:ring-blue-500"
+            type="email"
+            placeholder="email@example.com"
           />
 
-          <h3 className="text-lg font-semibold">Enter your password</h3>
+          <h3 className="text-lg font-medium mb-2">Enter Password</h3>
+
           <input
-            type="password"
+            className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 bg-white/50 focus:ring-blue-500"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+            required
+            type="password"
             placeholder="password"
-            className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
-          <button
-            type="submit"
-            className="bg-blue-500 text-center text-white py-2 rounded-md hover:bg-blue-600 transition"
-          >
-            Sign Up
+          <h3 className="text-lg font-medium mb-2">Vehicle Information</h3>
+          <div className="flex gap-4 mb-2">
+            <input
+              required
+              className="p-2 w-1/2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 bg-white/50 focus:ring-blue-500"
+              type="text"
+              placeholder="Vehicle Color"
+              value={vehicleColor}
+              onChange={(e) => {
+                setVehicleColor(e.target.value);
+              }}
+            />
+            <input
+              required
+              className="p-2 w-1/2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 bg-white/50 focus:ring-blue-500"
+              type="text"
+              placeholder="Vehicle Plate"
+              value={vehiclePlate}
+              onChange={(e) => {
+                setVehiclePlate(e.target.value);
+              }}
+            />
+          </div>
+          <div className="flex gap-4 mb-2">
+            <input
+              required
+              className="p-2 w-1/2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 bg-white/50 focus:ring-blue-500"
+              type="number"
+              placeholder="Vehicle Capacity"
+              value={vehicleCapacity}
+              onChange={(e) => {
+                setVehicleCapacity(e.target.value);
+              }}
+            />
+            <select
+              required
+              className="p-2 w-1/2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/50"
+              value={vehicleType}
+              onChange={(e) => {
+                setVehicleType(e.target.value);
+              }}
+            >
+              <option value="" disabled className="text-sm ">
+                Select Vehicle Type
+              </option>
+              <option value="car">Car</option>
+              <option value="auto">Auto</option>
+              <option value="moto">Moto</option>
+            </select>
+          </div>
+
+          <button className="bg-blue-500 text-center text-white py-2 rounded-md hover:bg-blue-600 transition">
+            Create Captain Account
           </button>
         </form>
 

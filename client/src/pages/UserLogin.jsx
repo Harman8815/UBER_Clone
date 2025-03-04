@@ -18,10 +18,10 @@ const UserLogin = () => {
     };
 
     const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/users/login`,
+      `${import.meta.env.VITE_BASE_URL}/user/login`,
       userData
     );
-
+console.log("Response received:", response);
     if (response.status === 200) {
       const data = response.data;
       setUserData(data.user);

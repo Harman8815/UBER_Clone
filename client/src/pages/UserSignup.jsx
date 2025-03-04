@@ -6,41 +6,52 @@ import { UserDataContext } from "../context/userContext";
 const UserSignup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [firstname, setfirstname] = useState("");
+  const [lastname, setlastname] = useState("");
   const [userData, setUserData] = useContext(UserDataContext);
   const navigate = useNavigate();
 
   const submitHandler = async (e) => {
+    console.log("submitHandler executed");
     e.preventDefault();
-
+  
     const userData = {
       email: email,
       password: password,
-      fullName: {
-        firstName: firstName,
-        lastName: lastName,
+      fullname: {
+        firstname: firstname, // Ensure correct variable names
+        lastname: lastname,
       },
     };
-
-    const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/users/signup`,
-      userData
-    );
-
-    if (response.status === 200) {
-      const data = response.data;
-      setUserData(data.user);
-      localStorage.setItem("token", data.token);
-      navigate("/home");
+  
+    console.log("Sending user data:", userData);
+  
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/user/register`,
+        userData
+      );
+  
+      console.log("Response received:", response);
+  
+      if (response.status === 201) {
+        const data = response.data;
+        setUserData(data.user);
+        localStorage.setItem("token", data.token);
+        navigate("/home");
+      }
+  
+      // Clear input fields after successful submission
+      setEmail("");
+      setPassword("");
+      setfirstname("");
+      setlastname("");
+  
+    } catch (error) {
+      console.error("Axios Error:", error.response?.data || error.message);
     }
-
-    setEmail("");
-    setPassword("");
-    setFirstName("");
-    setLastName("");
   };
-
+  
   return (
     <div className="container h-screen flex flex-col justify-between items-center p-2 relative">
       {/* Background Image */}
@@ -52,26 +63,29 @@ const UserSignup = () => {
       {/* Main Content */}
       <div className="w-full pt-4 flex flex-col z-10">
         <div className="font-bold pl-4 pt-2 text-2xl">
-          <h2>UBER</h2>
+          <h2>UBER -Signup-User</h2>
         </div>
 
         <form
           className="flex flex-col gap-2 p-6 rounded-2xl w-full"
-          onSubmit={submitHandler}
+          onSubmit={(e) => {
+            console.log("Form submitted");
+            submitHandler(e);
+          }}
         >
           <h3 className="text-lg font-semibold">What's your Name?</h3>
           <div className="flex flex-row gap-2">
             <input
               type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
+              value={firstname}
+              onChange={(e) => setfirstname(e.target.value)}
               placeholder="First Name"
               className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-1/2"
             />
             <input
               type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
+              value={lastname}
+              onChange={(e) => setlastname(e.target.value)}
               placeholder="Last Name"
               className="p-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-1/2"
             />
@@ -99,7 +113,7 @@ const UserSignup = () => {
             type="submit"
             className="bg-blue-500 text-center text-white py-2 rounded-md hover:bg-blue-600 transition"
           >
-            Sign Up
+            Create Account
           </button>
         </form>
 

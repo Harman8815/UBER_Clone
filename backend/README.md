@@ -563,6 +563,89 @@ This endpoint is used to log out the captain. It requires authentication and add
 
 The blacklist token logic is implemented to invalidate JWT tokens upon captain logout. The tokens are stored in a `BlacklistToken` collection with an expiration time of 24 hours.
 
-## Conclusion
+# Ride Route Documentation
 
-This document provides a detailed overview of the user and captain routes, including registration, login, profile retrieval, and logout, as well as the blacklist token logic. Ensure that the input data adheres to the validation rules to avoid errors.
+## Overview
+
+This document provides an overview of the ride routes in the backend, including the format of the ride input and the expected responses.
+
+## Create Ride Route
+
+### Endpoint
+
+`POST /rides/create`
+
+### Description
+
+This endpoint is used to create a new ride. It validates the input data and creates a new ride in the database if the input is valid.
+
+### Request Body
+
+The request body should be a JSON object with the following structure:
+
+```json
+{
+  "pickup": "Pickup address",
+  "destination": "Destination address",
+  "vehicleType": "car"
+}
+```
+
+### Validation Rules
+
+- `pickup`: Must be a valid address string.
+- `destination`: Must be a valid address string.
+- `vehicleType`: Must be one of `auto`, `car`, `moto`.
+
+### Responses
+
+#### Success
+
+- **Status Code**: `201 Created`
+- **Body**:
+  ```json
+  {
+    "_id": "ride_id_here",
+    "user": "user_id_here",
+    "pickup": "Pickup address",
+    "destination": "Destination address",
+    "otp": "generated_otp",
+    "fare": 100
+  }
+  ```
+
+#### Validation Error
+
+- **Status Code**: `400 Bad Request`
+- **Body**:
+  ```json
+  {
+    "errors": [
+      {
+        "msg": "Invalid pickup address",
+        "param": "pickup",
+        "location": "body"
+      },
+      {
+        "msg": "Invalid destination address",
+        "param": "destination",
+        "location": "body"
+      },
+      {
+        "msg": "Invalid vehicle type",
+        "param": "vehicleType",
+        "location": "body"
+      }
+    ]
+  }
+  ```
+
+## Get Fare Route
+
+### Endpoint
+
+`GET /rides/get-fare`
+
+### Description
+
+This endpoint is used to get the fare for a ride

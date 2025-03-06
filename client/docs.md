@@ -7,7 +7,11 @@
 - **File**: `src/pages/Home.jsx`
 - **Description**: The home page for users after they log in.
 - **Components**:
-  - Placeholder text "Home adsad"
+  - LiveTracking component for real-time tracking
+  - Location search panel
+  - Vehicle selection panel
+  - Confirm ride panel
+  - Waiting for driver panel
 
 ### 2. User Signup Page (`/signup`)
 
@@ -71,7 +75,9 @@
 - **File**: `src/pages/CaptainHome.jsx`
 - **Description**: The home page for captains after they log in.
 - **Components**:
-  - Placeholder text "CaptainHome"
+  - Captain details
+  - Ride popup panel
+  - Confirm ride popup panel
 
 ### 9. Captain Logout Page (`/captain/logout`)
 
@@ -97,6 +103,25 @@
   - Title "UBER"
   - "Get Started with Uber" section with a "Continue" button
 
+### 12. Riding Page (`/riding`)
+
+- **File**: `src/pages/Riding.jsx`
+- **Description**: The page for users during a ride.
+- **Components**:
+  - LiveTracking component for real-time tracking
+  - Ride details including captain's name, vehicle plate, and fare
+  - "Make a Payment" button
+
+### 13. Captain Riding Page (`/captain-riding`)
+
+- **File**: `src/pages/CaptainRiding.jsx`
+- **Description**: The page for captains during a ride.
+- **Components**:
+  - LiveTracking component for real-time tracking
+  - Ride details including distance to destination
+  - "Complete Ride" button
+  - Finish ride panel
+
 ## Context
 
 ### User Context
@@ -109,11 +134,19 @@
 
 ### Captain Context
 
-- **File**: `src/context/captainContext.jsx`
+- **File**: `src/context/CapatainContext.jsx`
 - **Description**: Provides captain data context to manage captain state across the application.
 - **Components**:
   - `CaptainDataContext` for managing captain state
   - `CaptainContext` component to wrap the application and provide context
+
+### Socket Context
+
+- **File**: `src/context/SocketContext.jsx`
+- **Description**: Provides socket connection context to manage real-time communication with the server.
+- **Components**:
+  - `SocketContext` for managing socket connection
+  - `SocketProvider` component to wrap the application and provide context
 
 ## Main Application
 
@@ -160,21 +193,27 @@ flowchart TD
         B --> I[CaptainLogout.jsx]:::page
         B --> J[UserLogout.jsx]:::page
         B --> K[Start.jsx]:::page
+        B --> L[Riding.jsx]:::page
+        B --> M[CaptainRiding.jsx]:::page
     end
 
     subgraph Context[Context Provider]
-        L[UserContext.jsx]:::context
-        M[CaptainContext.jsx]:::context
+        N[UserContext.jsx]:::context
+        O[CaptainContext.jsx]:::context
+        P[SocketContext.jsx]:::context
     end
 
     %% Context Connections
-    D --> L
-    E --> L
-    F --> M
-    G --> M
-    H --> M
-    I --> M
-    J --> L
+    D --> N
+    E --> N
+    F --> O
+    G --> O
+    H --> O
+    I --> O
+    J --> N
+    C --> P
+    L --> P
+    M --> P
 
     %% Navigation Paths
     D -.->|Navigate| E:::navigation
